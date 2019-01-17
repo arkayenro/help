@@ -111,7 +111,4 @@ if IsAddOnLoaded("ArkInventory") then
 	end
 	hooksecurefunc(CanIMogIt.frame, "ItemOverlayEvents", CIMI_ArkInventoryEvents)
 	
-	-- Makes sure things are updated if bags are open quickly after logging in. Won't always work, but better than nothing.
-	C_Timer.After(15, function() CanIMogIt:ResetCache() end)
-	
 end
