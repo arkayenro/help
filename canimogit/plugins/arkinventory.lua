@@ -3,6 +3,10 @@
 
 if IsAddOnLoaded("ArkInventory") then
 	
+	if ArkInventory.Const.Program.Version < 30821 then	
+		ArkInventory.OutputWarning( "The CanIMogIt plugin requires ArkInventory version 3.08.21 or higher to work - your version is too low, please upgrade ArkInventory" )
+		return
+	end
 	
 	----------------------------
 	-- UpdateIcon functions   --
