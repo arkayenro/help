@@ -4,7 +4,7 @@
 if IsAddOnLoaded("ArkInventory") then
 	
 	if ArkInventory.Const.Program.Version < 30821 then	
-		ArkInventory.OutputWarning( "The CanIMogIt plugin requires ArkInventory version 3.08.21 or higher to work - your version is too low, please upgrade ArkInventory" )
+		ArkInventory.OutputWarning( "The CanIMogIt plugin requires ArkInventory version 3.08.21 r810-alpha or higher to work - your version is too low, please upgrade ArkInventory" )
 		return
 	end
 	
@@ -26,7 +26,7 @@ if IsAddOnLoaded("ArkInventory") then
 		local bag = frame.ARK_Data.blizzard_id
 		local slot = frame.ARK_Data.slot_id
 		
-		if ArkInventory.Global.Location[frame.ARK_Data.loc_id].isOffline or loc_id == ArkInventory.Const.Location.Vault then
+		if ArkInventory.API.LocationIsOffline( loc_id ) or loc_id == ArkInventory.Const.Location.Vault then
 			--[[
 				Two things of note here:
 				1) isOffline should treat the item as if it's on a different character, ignoring soulbound status.
@@ -34,7 +34,7 @@ if IsAddOnLoaded("ArkInventory") then
 				
 				Grabbing the item from the frame directly, since they can't be soulbound anyway.
 			]]
-			local i = ArkInventory.Frame_Item_GetDB(frame)
+			local i = ArkInventory.API.ItemFrameItemTableGet( frame )
 			if i and i.h then
 				itemLink = i.h
 			end
