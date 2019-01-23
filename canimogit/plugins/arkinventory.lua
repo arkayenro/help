@@ -137,12 +137,12 @@ if IsAddOnLoaded("ArkInventory") then
 			local itemLink = nil
 			local bag = frame.ARK_Data.blizzard_id
 			local slot = frame.ARK_Data.slot_id
-			if ArkInventory.API.LocationIsOffline( loc_id ) or loc_id == ArkInventory.Const.Location.Vault then
+			if ArkInventory.API.LocationIsOffline( loc_id ) or not ( loc_id == ArkInventory.Const.Location.Bag or loc_id == ArkInventory.Const.Location.Bank ) then
 				local i = ArkInventory.API.ItemFrameItemTableGet( frame )
 				if i and i.h then
 					itemLink = i.h
 				end
-				-- use the itemlink for offline locations and the vault
+				-- use the itemlink for offline locations or any that are not the bag or bank
 				bag = nil
 				slot = nil
 			end
@@ -155,25 +155,15 @@ if IsAddOnLoaded("ArkInventory") then
 		----------------------------
 		
 		
-		function CIMI_ArkInventoryAddFrame(frame)
-			-- Add to frames
+		function CIMI_ArkInventoryAddFrame(frame,loc_id)
+			-- Add to item frame
 			CIMI_AddToFrame(frame, ArkInventoryItemButton_CIMIUpdateIcon)
 		end
 		
 		hooksecurefunc( ArkInventory.API, "ItemFrameLoaded", CIMI_ArkInventoryAddFrame )
 		
 		-- add to any preloaded item frames
-		
-		-- Bags
-		for framename, frame in ArkInventory.API.ItemFrameLoadedIterate( ArkInventory.Const.Location.Bag ) do
-			CIMI_ArkInventoryAddFrame(frame)
-		end
-		-- Player Bank
-		for framename, frame in ArkInventory.API.ItemFrameLoadedIterate( ArkInventory.Const.Location.Bank ) do
-			CIMI_ArkInventoryAddFrame(frame)
-		end
-		-- Guild Bank
-		for framename, frame in ArkInventory.API.ItemFrameLoadedIterate( ArkInventory.Const.Location.Vault ) do
+		for framename, frame in ArkInventory.API.ItemFrameLoadedIterate( ) do
 			CIMI_ArkInventoryAddFrame(frame)
 		end
 		
@@ -184,18 +174,15 @@ if IsAddOnLoaded("ArkInventory") then
 		
 		
 		function CIMI_ArkInventoryUpdate()
-			-- Bags
-			for framename, frame in ArkInventory.API.ItemFrameLoadedIterate( ArkInventory.Const.Location.Bag ) do
-				ArkInventoryItemButton_CIMIUpdateIcon(frame.CanIMogItOverlay)
-			end
-			-- Player Bank
-			for framename, frame in ArkInventory.API.ItemFrameLoadedIterate( ArkInventory.Const.Location.Bank ) do
-				C_Timer.After(.1, function() ArkInventoryItemButton_CIMIUpdateIcon(frame.CanIMogItOverlay) end)
-			end
-			-- Guild Bank
-			for framename, frame in ArkInventory.API.ItemFrameLoadedIterate( ArkInventory.Const.Location.Vault ) do
-				-- The guild bank frame does extra stuff after the CIMI icon shows up, so need to add a slight delay.
-				C_Timer.After(.2, function() ArkInventoryItemButton_CIMIUpdateIcon(frame.CanIMogItOverlay) end)
+			for framename, frame, loc_id in ArkInventory.API.ItemFrameLoadedIterate( ) do
+				if loc_id == ArkInventory.Const.Location.Bank then
+					C_Timer.After(.1, function() ArkInventoryItemButton_CIMIUpdateIcon(frame.CanIMogItOverlay) end)
+				elseif loc_id == ArkInventory.Const.Location.Vault then
+					-- The guild bank frame does extra stuff after the CIMI icon shows up, so need to add a slight delay.
+					C_Timer.After(.2, function() ArkInventoryItemButton_CIMIUpdateIcon(frame.CanIMogItOverlay) end)
+				else
+					ArkInventoryItemButton_CIMIUpdateIcon(frame.CanIMogItOverlay)
+				end
 			end
 		end
 		
